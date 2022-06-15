@@ -1,13 +1,22 @@
 pipeline {
-  agent any
-  parameters {
-    gitParameter branchFilter: 'origin/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'BRANCH'
-  }
-  stages {
-    stage('Example') {
-      steps {
-        git branch: "${params.BRANCH}", url: 'https://github.com/ashwinisomani/Jenkins-pipeline'
-      }
+    agent any
+    parameters {
+        gitParameter name: 'BRANCH_TAG',
+                     type: 'PT_BRANCH_TAG',
+                     defaultValue: 'master'
     }
-  }
+    stages {
+        stage('Example') {
+            steps {
+                checkout([$class: 'GitSCM',
+                          branches: [[name: "${params.BRANCH_TAG}"]],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions: [],
+                          gitTool: 'Default',
+                          submoduleCfg: [],
+                          userRemoteConfigs: [[url: 'https://github.com/jenkinsci/git-parameter-plugin.git']]
+                        ])
+            }
+        }
+    }
 }
